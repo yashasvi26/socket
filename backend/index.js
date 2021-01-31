@@ -1,26 +1,23 @@
-const app = require('express')();
-const http = require('http').Server(app);
-const cors = require('cors');
-app.use(cors());
-const io = require('socket.io')(http, {
-    cors: {
-      origin: "http://localhost:3000",
-      methods: ["GET", "POST"],
-      credentials: true
+const http=require('http')
+const express=require('express')
+const socketio=require('socket.io')
+
+const app=express()
+
+const server=http.createServer(app)
+const io=socketio(server,{
+    cors:{
+        origin:'*'
     }
-  });
+})
+const PORT=5000
 
-const port = 5000;
-
-io.on('connection', (socket)=>{
-  socket.on('message', ({name, message})=>{
-    io.emit('message', {name, message});
-  })
+//run when client connects
+io.on('connection',socket=>{
+    console.log("new WS connection");
+    socket.emit('message','hello')
 })
 
-app.listen(port, ()=>{
-    console.log(`Running Server on port:${port}`);
+server.listen(PORT,()=>{
+    console.log(`server running on port ${PORT}`);
 })
-
-
-
